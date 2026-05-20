@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+@theme {
+  --font-sans: "Inter", "Microsoft YaHei", sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --color-space-black: #020205;
+  --color-space-dark: #05050f;
+  --color-space-card: rgba(6, 6, 18, 0.55);
+  --color-star-gold: #fcc419;
+  --color-nebula-teal: #1098ad;
+  --color-nebula-purple: #7048e8;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(2, 2, 5, 0.4);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Sophisticated Dark Theme Specific classes */
+.sophisticated-bg {
+  background-color: #030308;
+  position: relative;
+}
+
+.sophisticated-gradients {
+  background-color: #030308;
+}
+
+
+/* Pulsing and glowing custom classes */
+.star-glow-gold {
+  filter: drop-shadow(0 0 8px rgba(252, 196, 25, 0.75)) drop-shadow(0 0 20px rgba(252, 196, 25, 0.35));
+}
+
+.star-glow-teal {
+  filter: drop-shadow(0 0 8px rgba(16, 152, 173, 0.75)) drop-shadow(0 0 20px rgba(16, 152, 173, 0.35));
+}
+
+.star-glow-purple {
+  filter: drop-shadow(0 0 8px rgba(112, 72, 232, 0.75)) drop-shadow(0 0 20px rgba(112, 72, 232, 0.35));
+}
+
+.text-shiny-gold {
+  background: linear-gradient(135deg, #ffffff 40%, #e2e8f0 70%, #fcc419 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-shiny-nebula {
+  background: linear-gradient(135deg, #3bc9db 0%, #10a8bc 30%, #7048e8 70%, #da77f2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes star-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+    filter: brightness(1.2);
+  }
+}
+
+.animate-star-pulse {
+  animation: star-pulse 4s infinite ease-in-out;
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-float {
+  animation: float-gentle 6s infinite ease-in-out;
+}
+
