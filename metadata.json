@@ -1,6 +1,0 @@
-{
-  "name": "星图 · 宇宙繁星深邃图谱",
-  "description": "一个集成了物理力学、动态星空与繁星星座的好奇心星网探索工具，呈现深邃、神秘且极具科技质感的暗色宇宙美学。",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
