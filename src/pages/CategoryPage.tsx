@@ -283,8 +283,6 @@ export default function CategoryPage({ lang, setLang }: { lang: "zh" | "zt" | "e
                            </span>
                          )}
                          <span>PUBLISHED IN {item.publication}</span>
-                         <span>·</span>
-                         <span>{item.date}</span>
                       </div>
                       
                       <h3 
