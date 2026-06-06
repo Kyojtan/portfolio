@@ -2,33 +2,24 @@
 export const TRANSLATIONS = {
   zh: {
     name: "谭旭君",
-    title: "产品设计师 & 开发者的个人主页",
     aiProjects: "AI 项目",
     productThinking: "产品思考",
     photography: "摄影作品",
     aboutMe: "关于我",
-    contact: "联系我",
-    softLife: "Soft Life System"
   },
   zt: {
     name: "譚旭君",
-    title: "產品設計師 & 開發者的個人主頁",
     aiProjects: "AI 項目",
     productThinking: "產品思考",
     photography: "攝影作品",
     aboutMe: "關於我",
-    contact: "聯絡我",
-    softLife: "Soft Life System"
   },
   en: {
     name: "Xujun Tan",
-    title: "Product Designer & Developer Personal Portfolio",
     aiProjects: "AI Projects",
     productThinking: "Product Thinking",
     photography: "Photography",
     aboutMe: "About Me",
-    contact: "Contact",
-    softLife: "Soft Life System"
   }
 };
 
@@ -64,27 +55,18 @@ export const CATEGORY_CONTENT = {
     zh: {
       title: "周末项目",
       subtitle: "探索人工智能在产品设计中的应用",
-      items: [
-        { title: "AI 写作助手", description: "基于大模型的智能写作工具，帮助创作者克服空白页恐慌。", imagePrompt: "Minimalist futuristic AI assistant interface, glowing soft blue nodes, frosted glass card" },
-        { title: "智能推荐引擎", description: "个性化内容分发系统，提升用户参与度与留存。", imagePrompt: "Abstract data flow visualization, soft gradients, liquid shapes" }
-      ]
+      items: [],
     },
     zt: {
       title: "週末項目",
       subtitle: "探索人工智慧在產品設計中的應用",
-      items: [
-        { title: "AI 寫作助手", description: "基於大模型的智慧寫作工具，幫助創作者克服空白頁恐慌。", imagePrompt: "Minimalist futuristic AI assistant interface, glowing soft blue nodes, frosted glass card" },
-        { title: "智慧推薦引擎", description: "個性化內容分發系統，提升使用者參與度與留存。", imagePrompt: "Abstract data flow visualization, soft gradients, liquid shapes" }
-      ]
+      items: [],
     },
     en: {
       title: "Friday night Projects",
       subtitle: "Exploring AI applications in product design",
-      items: [
-        { title: "AI Writing Assistant", description: "LLM-powered intelligent writing tool helping creators overcome blank page syndrome.", imagePrompt: "Minimalist futuristic AI assistant interface, glowing soft blue nodes, frosted glass card" },
-        { title: "Smart Recommendation Engine", description: "Personalized content delivery system increasing user engagement and retention.", imagePrompt: "Abstract data flow visualization, soft gradients, liquid shapes" }
-      ]
-    }
+      items: [],
+    },
   },
   product: {
     zh: {
@@ -306,18 +288,6 @@ export const CATEGORY_CONTENT = {
             "需求与数据伦理：开展焦点小组进行差距分析；管理医疗数据集的脱敏合规。",
             "服务优化：通过 Near Me 视频咨询重新设计用户路径，患者留存率提高 30%。"
           ]
-        },
-        {
-          period: "2026年2月 - 至今",
-          role: "AI 技术项目",
-          company: "个人",
-          location: "远程",
-          details: [
-            "AI 聊天机器人 (RAG)：使用 Supabase/Cursor 构建 CFA 考试助教；优化检索精度。",
-            "自动化流 (n8n)：设计 n8n 管道进行多源数据聚合与 AI 内容合成。",
-            "Retro Player（Chrome扩展）：为 YouTube 和 Bilibili 视频添加实时 VHS 滤镜与音频失真效果；获得小红书 20k+ 浏览、1k+ 点赞收藏；入选 Chrome 应用商店精选推荐。",
-            "AI Mix Studio: 基于 DeepSeek prompts 与 MiniMax Music 2.6 开发了一款文字转混音工具；通过 pydub crossfade 将生成曲目无缝衔接为完整曲目单；内置自定义p5js雨景生成，打造沉浸式听觉体验。"
-          ]
         }
       ],
       education: [
@@ -336,7 +306,7 @@ export const CATEGORY_CONTENT = {
       experience: [
         {
           period: "2025年9月 - 2026年1月",
-          role: "Associate Product Owner",
+          role: "AI產品負責人",
           company: "牛津大學出版社",
           location: "香港",
           details: [
@@ -364,16 +334,6 @@ export const CATEGORY_CONTENT = {
           details: [
             "需求與數據倫理：開展焦點小組進行差距分析；管理醫療數據集的脫敏合規。",
             "服務優化：通過 Near Me 視頻諮詢重新設計用戶路徑，患者留存率提高 30%。"
-          ]
-        },
-        {
-          period: "2026年2月 - 至今",
-          role: "AI 技術項目",
-          company: "個人",
-          location: "遠程",
-          details: [
-            "AI 聊天機器人 (RAG)：使用 Supabase/Cursor 構建 CFA 考試助教；優化檢索精度。",
-            "自動化流 (n8n)：設計 n8n 管道進行多源數據聚合與 AI 內容合成。"
           ]
         }
       ],
@@ -422,16 +382,6 @@ export const CATEGORY_CONTENT = {
           details: [
             "Requirements & Data Ethics: Conducted focus groups for gap analysis; managed medical dataset de-identification.",
             "Service Optimization: Redesigned user journeys via Near Me video consulting, improving retention by 30%."
-          ]
-        },
-        {
-          period: "Feb 2026 - Present",
-          role: "AI Technical Projects",
-          company: "Personal",
-          location: "Remote",
-          details: [
-            "AI Chatbot (RAG): Architected RAG chatbot using Supabase/Cursor; optimized retrieval via structured chunking.",
-            "Automation Workflow (n8n): Engineered n8n pipelines for multi-source data aggregation and LLM synthesis."
           ]
         }
       ],

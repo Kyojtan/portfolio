@@ -1,0 +1,251 @@
+import { MapPin, Database, Network, Music, Sparkles } from "lucide-react";
+
+export interface DialogueMessage {
+  role: "user" | "ai";
+  text: string;
+}
+
+export interface ProjectData {
+  id: string;
+  icon: typeof Music;
+  color: string;
+  badge: { zh: string; zt: string; en: string };
+  name: { zh: string; zt: string; en: string };
+  desc: { zh: string; zt: string; en: string };
+  dialogue: {
+    zh: DialogueMessage[];
+    zt: DialogueMessage[];
+    en: DialogueMessage[];
+  };
+}
+
+export const DEMO_VIDEOS = {
+  retro: "/demo_video/retro-player.mp4",
+  mix: "/demo_video/ai-mix-studio.mov",
+  fetch: "/demo_video/fetch-location.mp4",
+  wander: "/demo_video/wander.mov",
+} as const;
+
+export const AI_PROJECTS: ProjectData[] = [
+  {
+    id: "retro",
+    icon: Music,
+    color: "#FF9F0A",
+    badge: { zh: "网页氛围延伸", zt: "網頁氛圍延伸", en: "Aesthetic Extension" },
+    name: {
+      zh: "Retro Player",
+      zt: "Retro Player",
+      en: "Retro Player"
+    },
+    desc: {
+      zh: "在 Playlist 上加一层复古滤镜和磁带底噪",
+      zt: "在 Playlist 上加一層復古濾鏡和磁帶底噪",
+      en: "a Chrome extension for vintage filters, tape hiss, and pitch wobble, one toggle and you're in that citypop mood"
+    },
+    dialogue: {
+      zh: [
+        { role: "user", text: "我最近在想，为什么我喜欢的歌和我想要的感觉之间，总是差一点什么。" },
+        { role: "ai", text: "你是想说，现有的歌单没有办法完全匹配你内心的氛围感？" },
+        { role: "user", text: "差不多。我一般在 YouTube 或 B 站上听 playlist，但画面和声音总是分开的。" },
+        { role: "ai", text: "那如果加一层视觉的\"调味料\"呢？" },
+        { role: "user", text: "对！我想能不能在视频上加一层滤镜，让它不只是视频，而是一种氛围——旧 VHS 的质感、磁带底噪，让整个观看体验更有感觉。" },
+        { role: "ai", text: "于是你就做了 Retro Player。" },
+        { role: "user", text: "一个 Chrome 插件，可以在 YouTube 和 B 站上叠加复古滤镜，调节滑条模拟磁带底噪、音高波动，按下开关就进入那个旧时代。" }
+      ],
+      zt: [
+        { role: "user", text: "我最近在想，為什麼我喜歡的歌和我想要的感覺之間，總是差一點什麼。" },
+        { role: "ai", text: "你是想說，現有的歌單沒有辦法完全匹配你內心的氛圍感？" },
+        { role: "user", text: "差不多。我一般在 YouTube 或 B 站上聽 playlist，但畫面和聲音總是分開的。" },
+        { role: "ai", text: "那如果加一層視覺的\"調味料\"呢？" },
+        { role: "user", text: "對！我想能不能在視頻上加一層濾鏡，讓它不只是視頻，而是一種氛圍——舊 VHS 的質感、磁帶底噪，讓整個觀看體驗更有感覺。" },
+        { role: "ai", text: "於是你就做了 Retro Player。" },
+        { role: "user", text: "一個 Chrome 插件，可以在 YouTube 和 B 站上疊加復古濾鏡，調節滑條模擬磁帶底噪、音高波動，按下開關就進入那個舊時代。" }
+      ],
+      en: [
+        { role: "user", text: "Lately I've been wondering why there is always a disconnect between the songs I love and the mood I really want." },
+        { role: "ai", text: "Are you saying existing playlists fail to capture the subtle ambient atmospheres you feel inside?" },
+        { role: "user", text: "Exactly. I usually play playlists on YouTube or Bilibili, but the visuals and the sounds always feel disjointed." },
+        { role: "ai", text: "What if we add a sensory layer of 'visual seasoning'?" },
+        { role: "user", text: "Yes! I thought, what if we overlay an atmospheric filter over the video so it becomes a complete scene—adding a warm dusty VHS texture, analog cassette tape hiss, making the entire listening experience so much deeper." },
+        { role: "ai", text: "And that's how you created Retro Player." },
+        { role: "user", text: "A Chrome extension that overlays vintage retro filters on YouTube and Bilibili. You adjust sliders simulating tape deck hiss and pitch wobbles; with one physical toggle, you step back into that golden old era." }
+      ]
+    }
+  },
+  {
+    id: "mix",
+    icon: Sparkles,
+    color: "#BF5AF2",
+    badge: { zh: "环境发生器", zt: "環境發生器", en: "Acoustic Generator" },
+    name: {
+      zh: "AI Mix Studio",
+      zt: "AI Mix Studio",
+      en: "AI Mix Studio"
+    },
+    desc: {
+      zh: "把 AI 生成的歌 做成一个无缝 playlist",
+      zt: "把 AI 生成的歌 做成一個無縫 playlist",
+      en: "seamless playlist of AI-generated tracks"
+    },
+    dialogue: {
+      zh: [
+        { role: "user", text: "最近在试 AI 生成音乐的工具，感觉挺好听的。" },
+        { role: "ai", text: "说说看，哪里让你觉得有意思？" },
+        { role: "user", text: "它们生成的音乐很有氛围感，但都是各自独立的，听完一首要手动切下一首，中间的断开让我很出戏。" },
+        { role: "ai", text: "你想要的不是一个一个独立的片段，而是一个完整的、能一直播放的氛围。" },
+        { role: "user", text: "对，而且我发现，同一个 prompt 生成出来的很多首歌风格都很像——既然风格相近，为什么不能把它们无缝串在一起，变成一个完整的 listening experience？" },
+        { role: "ai", text: "所以你做了一个自己的播放器，把这些风格相似的歌接在一起，中间没有断层。" },
+        { role: "user", text: "嗯，而且还做了一个比较有氛围感的下雨场景播放器，配上 AI 生成的音乐，就是我理想中的那个「感觉」。" }
+      ],
+      zt: [
+        { role: "user", text: "最近在試 AI 生成音樂的工具，感覺挺好聽的。" },
+        { role: "ai", text: "說說看，哪裡讓你覺得有意思？" },
+        { role: "user", text: "它們生成的音樂很有氛圍感，但它們均為各自獨立的，聽完一首要手動切下一首，中間的斷開讓我很出戲。" },
+        { role: "ai", text: "你想要的不是一個一個獨立的片段，而是一個完整的、能一直播放的氛圍。" },
+        { role: "user", text: "對，而且我發現，同一個 prompt 生成出來的很多首歌風格都很像——既然風格相近，為什麼不能把它們無縫串在一起，變成一個完整的 listening experience？" },
+        { role: "ai", text: "所以你做了一個自己的播放器，把這些風格相似的歌接在一起，中間沒有斷層。" },
+        { role: "user", text: "嗯，而且還做了一個比較有氛圍感的下雨場景播放器，配上 AI 生成的音樂，就是我理想中的那個「感覺」。" }
+      ],
+      en: [
+        { role: "user", text: "I've been experimenting with music generated by AI lately, and the tracks actually sound quite beautiful." },
+        { role: "ai", text: "Tell me, what part of it is capturing your interest?" },
+        { role: "user", text: "The AI music has an incredible atmosphere, but they are all isolated audio tracks. You finish one and have to manually click the next; that brief silence breaks the spell." },
+        { role: "ai", text: "You didn't want isolated fragments; you wanted an uninterrupted, evolving ambient stream." },
+        { role: "user", text: "Yes! And I noticed that many songs generated by the same prompt share highly similar acoustics. Since they are so close in style, why not blend them seamlessly into a unified listening journey?" },
+        { role: "ai", text: "So you built a custom player to stitch these similar songs together organically, eliminating all dead space." },
+        { role: "user", text: "Precisely. I also designed an atmospheric rain scenery visualizer; paired with the continuous AI tracks, it becomes exactly the 'feeling' I sought." }
+      ]
+    }
+  },
+  {
+    id: "fetch",
+    icon: MapPin,
+    color: "#30B0C7",
+    badge: { zh: "地理特工", zt: "地理特工", en: "Locational Intelligence" },
+    name: {
+      zh: "Fetch Location",
+      zt: "Fetch Location",
+      en: "Fetch Location"
+    },
+    desc: {
+      zh: "从图片和文案获取位置 双击直接打开地图",
+      zt: "從圖片和文案獲取位置 雙擊直接打開地圖",
+      en: "fetch location from photos and captions, double-tap to open Maps"
+    },
+    dialogue: {
+      zh: [
+        { role: "user", text: "我每次在小红书被种草咖啡厅，想导航过去还要手动搜索，太麻烦了。" },
+        { role: "ai", text: "所以你想把这些步骤自动化？" },
+        { role: "user", text: "但我发现一个问题——很多笔记里根本没有写清楚具体地址，全靠图片、IP 或者文字里的隐藏线索。" },
+        { role: "ai", text: "那怎么定位？" },
+        { role: "user", text: "我给 DeepSeek 喂了一个 prompt，让它当我的地理专家——分析图片环境、博主的 IP、甚至语气，判断这家店大概在哪。然后背部轻点两下，直接跳地图打开。" },
+        { role: "ai", text: "懒人必备。" },
+        { role: "user", text: "真的，以后再也不用手动搜了。" }
+      ],
+      zt: [
+        { role: "user", text: "我每次在小紅書被種草咖啡廳，想導航過去還要手動搜索，太麻煩了。" },
+        { role: "ai", text: "所以你想把這些步驟自動化？" },
+        { role: "user", text: "但我發現一個問題——很多筆記裡根本沒有寫清楚具體地址，全靠圖片、IP 或者文字裡的隱藏線索。" },
+        { role: "ai", text: "那怎麼定位？" },
+        { role: "user", text: "我給 DeepSeek 餵了一個 prompt，讓它當我的地理專家——分析圖片環境、博主的 IP、甚至語氣，判斷這家店大概在哪。然後背部輕點兩下，直接跳地圖打開。" },
+        { role: "ai", text: "懶人必備。" },
+        { role: "user", text: "真的，以後再也不用手動搜了。" }
+      ],
+      en: [
+        { role: "user", text: "Every time I bookmark a cool cafe on Xiaohongshu, having to manually search the name in maps to navigate feels incredibly tedious." },
+        { role: "ai", text: "So you wanted to automate this entire sequence?" },
+        { role: "user", text: "But I hit a wall—many posts don't specify an exact store address; you only get photos, an approximate IP region, or abstract hints buried in captions." },
+        { role: "ai", text: "How on earth do you locate it then?" },
+        { role: "user", text: "I engineered a prompt for DeepSeek to act as my visual-geography specialist—analyzing surrounding storefront styles, blogger IP metadata, and narrative clues to deduce the exact shop location. Then, by double-tapping the back of the phone, maps open instantly centered on the spot." },
+        { role: "ai", text: "The ultimate hack for laziness." },
+        { role: "user", text: "Unmatched convenience. Honestly, after refining this prompt, I realized I will never have to manually search locations again." }
+      ]
+    }
+  },
+  {
+    id: "rag",
+    icon: Database,
+    color: "#32D74B",
+    badge: { zh: "溯源知识库", zt: "溯源知識庫", en: "Traceable Syllabus Database" },
+    name: {
+      zh: "RAG AI chatbot",
+      zt: "RAG AI chatbot",
+      en: "RAG AI chatbot"
+    },
+    desc: {
+      zh: "专门做给 CFA 考试的向量知识库",
+      zt: "專門做給 CFA 考試的向量知識庫",
+      en: "vector database for CFA exams"
+    },
+    dialogue: {
+      zh: [
+        { role: "user", text: "网上 CFA 的备考资料太多了，质量参差不齐，我自己的笔记又散在各处。" },
+        { role: "ai", text: "所以你想把这些材料整合成一个可溯源的知识库？" },
+        { role: "user", text: "对。网上的信息太杂，我自己整理的笔记又没有体系。我就想，能不能基于自己的资料建一个问答系统——它回答的知识都能直接指向教材的某一部分，我一看就知道哪个知识点还薄弱、需要补充什么。" },
+        { role: "ai", text: "于是你做了这个 RAG 知识库。" },
+        { role: "user", text: "嗯，基于 RAG 架构搭建的 CFA 考试知识库。通过对比测试确定了最佳 chunk size，改善了上下文语义完整性。针对公式 and 特殊字符，用语义搜索直接依赖上下文推断的策略，避免强制解析导致的信息损耗。" }
+      ],
+      zt: [
+        { role: "user", text: "網上 CFA 的備考資料太多了，質量參差不齊，我自己認真整理的筆記又散在各處。" },
+        { role: "ai", text: "所以你想把這些材料整合為一個可溯源的知識庫？" },
+        { role: "user", text: "對。網上的信息太雜，我自己整理的筆記又沒有體系。我就想，能不能基於自己的資料建一個問答系統——它回答的知識都能直接指向教材的某一部分，我一看就知道哪個知識點還薄弱、需要補充什麼。" },
+        { role: "ai", text: "於是你做了這個 RAG 知識庫。" },
+        { role: "user", text: "嗯，基於 RAG 架構搭建的 CFA 考試知識庫。通過對比測試確定了最佳 chunk size，改善了上下文語義完整性。針對公式與特殊字符，語義搜索直接依賴上下文推斷的策略，避免強制解析導致的信息損耗。" }
+      ],
+      en: [
+        { role: "user", text: "There are too many CFA prep resources scattered online of variable quality, and my own structured study notes are dispersed everywhere." },
+        { role: "ai", text: "So your goal was to aggregate these materials into a unified, highly traceable knowledge hub?" },
+        { role: "user", text: "Correct. Public articles can be chaotic, and my notes lack global coherence. I wondered: can I construct a Q&A engine over my personal study vault, where every answer directly roots itself in verified textbook passages, letting me spot my knowledge gaps instantly?" },
+        { role: "ai", text: "Hence you built this dynamic RAG catalog." },
+        { role: "user", text: "Yes, a customized CFA prep wizard under RAG architecture. Through empirical cross-testing, I identified the optimal chunk sizes to maintain conversational semantics. For complex equations and symbols, I deployed safe context inference mapping to avoid parsing losses." }
+      ]
+    }
+  },
+  {
+    id: "wander",
+    icon: Network,
+    color: "#FFD60A",
+    badge: { zh: "力导知识网", zt: "力導知識網", en: "Semantic Astromap" },
+    name: {
+      zh: "Wander 知识星图",
+      zt: "Wander 知識星圖",
+      en: "Wander Semantic Astromap"
+    },
+    desc: {
+      zh: "将和 AI 聊完的好想法整理成知识星图",
+      zt: "將和 AI 聊完的好想法整理成知識星圖",
+      en: "knowledge map conversation with AI"
+    },
+    dialogue: {
+      zh: [
+        { role: "user", text: "和 AI 对话时经常有很好的洞察，但聊完就散了，过几天完全想不起来当时讨论了什么。" },
+        { role: "ai", text: "你想把对话里的知识点沉淀下来。" },
+        { role: "user", text: "对，而且我希望这些知识点之间是有联系的——不是一个个孤立的笔记，而是一张能让我看到「这个问题和那个问题其实是相关的」的网。" },
+        { role: "ai", text: "所以你做了一个知识星图。" },
+        { role: "user", text: "一个 D3.js 力导向图，把对话里的关键知识点做成星星，节点之间的连线代表它们在语义上是相关的。点击星星可以看到当时的讨论摘要，还可以让 AI 推荐「这个话题和哪个现有话题有关联」。" }
+      ],
+      zt: [
+        { role: "user", text: "和 AI 對話時經常有很好的洞察，但聊完就散了，過幾天完全想不起來當時討論了什麼。" },
+        { role: "ai", text: "你想把對話裡的知識點沉澱下來。" },
+        { role: "user", text: "對，而且我希望這些知識點之間是有聯絡的——不是一個個孤立的筆記，而是一張能讓我看到「這個問題和那個問題其實是相關的」的網。" },
+        { role: "ai", text: "所以你做了這個知識星圖。" },
+        { role: "user", text: "一個 D3.js 力導向圖，把對話裡的關鍵知識點做成星星，節點之間的連線代表它們在語義上是相關的。點擊星星可以看見當時的討論摘要，還可以讓 AI 推薦「這個話題和哪個現有話題有關聯」。" }
+      ],
+      en: [
+        { role: "user", text: "Conversations with AI yield brilliant breakthroughs, but once the chat ends, they dissolve—it is almost impossible to recall what we brainstormed a few days later." },
+        { role: "ai", text: "You wanted a tactile medium to retain and consolidate those cerebral highlights." },
+        { role: "user", text: "Right! And I wanted these concepts to remain interconnected—not isolated folders of static documents, but an organic web which signals 'look, this inquiry actually shares a deep root with that subject'." },
+        { role: "ai", text: "Which led you to design this semantic Starry Astro-graph." },
+        { role: "user", text: "Exactly. An interactive network using a D3.js force-directed map. Key ideas crystallize as shining stars, connected by gravity lines indicating semantic relationships. Tapping an astro-node offers the dialogue recap and summons AI connections pointing to adjacencies." }
+      ]
+    }
+  }
+];
+
+export function getProjectById(id: string) {
+  return AI_PROJECTS.find((p) => p.id === id);
+}
+
+export function getProjectIndex(id: string) {
+  return AI_PROJECTS.findIndex((p) => p.id === id);
+}

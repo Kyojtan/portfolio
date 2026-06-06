@@ -1,145 +1,13 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { motion } from "motion/react";
-import { Github, Mail, Linkedin } from "lucide-react";
-import Folder from './components/Folder';
 import CategoryPage from './pages/CategoryPage';
-import CursorTrail from './components/CursorTrail';
-import { TRANSLATIONS, PROJECTS } from './constants';
-
-function playClickSound() {
-  try {
-    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioContext) return;
-    const ctx = new AudioContext();
-    
-    const osc1 = ctx.createOscillator();
-    const osc2 = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-
-    osc1.connect(gainNode);
-    osc2.connect(gainNode);
-    gainNode.connect(ctx.destination);
-
-    // Warm wooden switch click
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(1000, ctx.currentTime);
-    osc1.frequency.exponentialRampToValueAtTime(250, ctx.currentTime + 0.04);
-
-    osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(180, ctx.currentTime);
-    osc2.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.06);
-
-    gainNode.gain.setValueAtTime(0.06, ctx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
-
-    osc1.start(ctx.currentTime);
-    osc1.stop(ctx.currentTime + 0.065);
-    osc2.start(ctx.currentTime);
-    osc2.stop(ctx.currentTime + 0.075);
-  } catch (err) {
-    // Autoplay browser policy may defer context start, will resume automatically.
-  }
-}
+import AiProjectDetailPage from './pages/AiProjectDetailPage';
+import HomePageContent from './components/HomePageContent';
+import { playUiSwitchSound } from './utils/uiSwitchSound';
 
 function Home({ lang, setLang }: { lang: 'zh' | 'zt' | 'en', setLang: (l: 'zh' | 'zt' | 'en') => void }) {
-  const t = useMemo(() => TRANSLATIONS[lang] || TRANSLATIONS.zh, [lang]);
-
-  return (
-    <main className="min-h-screen flex flex-col p-8 md:p-12 font-sans relative overflow-x-hidden">
-      {/* Header Section (Minimalist Notion-like) */}
-      <header className="flex justify-between items-center mb-0 px-4 w-full max-w-7xl mx-auto">
-        <div className="flex flex-col">
-          <h1 className="text-[24px] font-bold text-[#1A1A1A] tracking-tight font-mono">
-            {t.name}
-          </h1>
-          <p className="text-sm md:text-base text-accent font-bold font-mono uppercase tracking-widest">
-            Portfolio
-          </p>
-        </div>
-
-        {/* Language Switcher */}
-        <div className="flex items-center gap-6">
-          <div className="bg-gray-100/40 backdrop-blur-md p-1 rounded-full flex items-center gap-0.5 border border-gray-100/50 shadow-xs">
-            <button
-              onClick={() => setLang('zh')}
-              className={`px-3 py-1 text-xs font-bold rounded-full transition-all cursor-none ${
-                lang === 'zh' ? 'bg-black text-white shadow-sm' : 'text-gray-400 hover:text-gray-700'
-              }`}
-            >
-              简
-            </button>
-            <button
-              onClick={() => setLang('zt')}
-              className={`px-3 py-1 text-xs font-bold rounded-full transition-all cursor-none ${
-                lang === 'zt' ? 'bg-black text-white shadow-sm' : 'text-gray-400 hover:text-gray-700'
-              }`}
-            >
-              繁
-            </button>
-            <button
-              onClick={() => setLang('en')}
-              className={`px-3.5 py-1 text-xs font-bold rounded-full transition-all cursor-none ${
-                lang === 'en' ? 'bg-black text-white shadow-sm' : 'text-gray-400 hover:text-gray-700'
-              }`}
-            >
-              EN
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content: Glassy Folder Grid */}
-      <div className="flex-grow w-full max-w-6xl mx-auto flex flex-col items-center justify-center my-auto py-8">
-        {/* Folders Grid */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-10 md:gap-20 items-start justify-items-center w-full">
-          {PROJECTS.map((project, index) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, scale: 0.9, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <Folder
-                color={project.color}
-                label={t[project.labelKey as keyof typeof t]}
-                to={project.path}
-              />
-            </motion.div>
-          ))}
-        </section>
-      </div>
-
-      {/* Footer Social Icons (Minimalist Integrated Style) */}
-      <footer className="flex items-center justify-center gap-8 mt-auto pb-4">
-        <motion.a
-          href="https://github.com/Kyojtan"
-          target="_blank"
-          rel="noopener noreferrer"
-          whileHover={{ y: -4, scale: 1.1 }}
-          className="text-gray-400 hover:text-[#1A1A1A] transition-all cursor-none"
-        >
-          <Github className="w-6 h-6" />
-        </motion.a>
-        <motion.a
-          href="https://www.linkedin.com/in/xujun-tan"
-          target="_blank"
-          rel="noopener noreferrer"
-          whileHover={{ y: -4, scale: 1.1 }}
-          className="text-gray-400 hover:text-[#0077B5] transition-all cursor-none"
-        >
-          <Linkedin className="w-6 h-6" />
-        </motion.a>
-        <motion.a
-          href="mailto:tanxujun895@gmail.com"
-          whileHover={{ y: -4, scale: 1.1 }}
-          className="text-gray-400 hover:text-accent transition-all cursor-none"
-        >
-          <Mail className="w-6 h-6" />
-        </motion.a>
-      </footer>
-    </main>
-  );
+  return <HomePageContent lang={lang} setLang={setLang} />;
 }
 
 const CatCursorSVG = ({ isHovering }: { isHovering: boolean }) => (
@@ -238,7 +106,7 @@ export default function App() {
     const handleGlobalClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (target.closest('a, button, [role="button"], .cursor-pointer, input[type="range"]')) {
-        playClickSound();
+        playUiSwitchSound();
       }
     };
     window.addEventListener('click', handleGlobalClick);
@@ -247,12 +115,16 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <CursorTrail />
       <CustomCursor />
       <Routes>
         <Route path="/" element={
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Home lang={lang} setLang={setLang} />
+          </motion.div>
+        } />
+        <Route path="/category/ai/:projectId" element={
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <AiProjectDetailPage lang={lang} setLang={setLang} />
           </motion.div>
         } />
         <Route path="/category/:id" element={
