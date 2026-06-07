@@ -141,17 +141,18 @@ export default function ProductThinkingListOverlay({
           className="product-list-shell relative z-10 pointer-events-auto select-none"
           onClick={(e) => e.stopPropagation()}
         >
-          <button
-            type="button"
-            onClick={close}
-            className="product-list-close"
-            aria-label={lang === "en" ? "Close" : "关闭"}
-          >
-            <X size={15} strokeWidth={1.75} />
-          </button>
-
           <div className="product-list-panel">
-            <h2 className="product-list-heading">{PANEL_TITLE[lang]}</h2>
+            <div className="product-list-header">
+              <button
+                type="button"
+                onClick={close}
+                className="product-list-close"
+                aria-label={lang === "en" ? "Close" : "关闭"}
+              >
+                <X size={16} strokeWidth={1.75} />
+              </button>
+              <h2 className="product-list-heading">{PANEL_TITLE[lang]}</h2>
+            </div>
 
             <div className="product-list-body">
               <div ref={listRef} className="product-list-viewport" onWheel={onWheel}>

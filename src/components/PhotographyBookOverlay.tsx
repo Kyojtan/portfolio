@@ -9,6 +9,9 @@ import {
   type PhotoSpread,
 } from "../data/photography";
 import { playPageFlipSound } from "../utils/pageFlipSound";
+import { useHorizontalSwipe } from "../utils/useHorizontalSwipe";
+import { useVerticalSwipe } from "../utils/useVerticalSwipe";
+import { useAlbumVerticalLayout } from "../utils/useMediaQuery";
 
 interface PhotographyBookOverlayProps {
   lang: "zh" | "zt" | "en";
@@ -147,7 +150,7 @@ function BookPhotoLoaded({
       <img
         src={currentSrc}
         alt={alt}
-        className={`w-full h-full object-cover ${objectPosition}`}
+        className={`w-full h-full object-contain ${objectPosition}`}
         referrerPolicy="no-referrer"
         onError={handleError}
         draggable={false}
@@ -263,9 +266,11 @@ function viewKind(index: ViewIndex, spreadCount: number): ViewKind {
 function CoverFlyout({
   children,
   onComplete,
+  vertical = false,
 }: {
   children: React.ReactNode;
   onComplete?: () => void;
+  vertical?: boolean;
 }) {
   const flyoutMs = flipTotalMs("cover-open");
   const onCompleteRef = useRef(onComplete);
@@ -278,16 +283,29 @@ function CoverFlyout({
 
   return (
     <motion.div
-      className="muji-flip-leaf muji-flip-leaf--cover-flyout"
-      style={{ transformOrigin: "left center", transformStyle: "preserve-3d" }}
-      initial={{ x: 0, rotateY: 0, rotateX: 0, z: 0, opacity: 1 }}
-      animate={{
-        x: ["0%", "28%", "115%"],
-        rotateY: [0, -48, -165],
-        rotateX: [0, -4, 0],
-        z: [0, 16, 0],
-        opacity: [1, 0.85, 0],
+      className={`muji-flip-leaf muji-flip-leaf--cover-flyout${vertical ? " muji-flip-leaf--vertical" : ""}`}
+      style={{
+        transformOrigin: vertical ? "top center" : "left center",
+        transformStyle: "preserve-3d",
       }}
+      initial={{ x: 0, y: 0, rotateY: 0, rotateX: 0, z: 0, opacity: 1 }}
+      animate={
+        vertical
+          ? {
+              y: ["0%", "-28%", "-115%"],
+              rotateX: [0, -48, -165],
+              rotateY: [0, -4, 0],
+              z: [0, 16, 0],
+              opacity: [1, 0.85, 0],
+            }
+          : {
+              x: ["0%", "28%", "115%"],
+              rotateY: [0, -48, -165],
+              rotateX: [0, -4, 0],
+              z: [0, 16, 0],
+              opacity: [1, 0.85, 0],
+            }
+      }
       transition={{
         duration: flyoutMs / 1000,
         ease: [0.22, 1, 0.36, 1] as const,
@@ -308,6 +326,7 @@ function FlipLeaf({
   back,
   onComplete,
   motionVariant = "default",
+  vertical = false,
 }: {
   className: string;
   origin: string;
@@ -317,6 +336,7 @@ function FlipLeaf({
   back: React.ReactNode;
   onComplete?: () => void;
   motionVariant?: "default" | "cover-open" | "cover-close";
+  vertical?: boolean;
 }) {
   const duration = FLIP_MS / 1000;
   const slideMs = duration * 0.16;
@@ -331,58 +351,103 @@ function FlipLeaf({
 
   const animate =
     motionVariant === "cover-open"
-      ? {
-          x: ["0%", "118%"],
-          rotateY: [fromRotate, toRotate],
-          rotateX: [0, -4, -1, 0],
-          z: [0, 36, 10, 0],
-        }
-      : motionVariant === "cover-close"
+      ? vertical
         ? {
-            x: [0, 0, 28, 0],
-            rotateY: [fromRotate, fromRotate, toRotate, toRotate],
-            rotateX: [0, -4, -1, 0],
+            y: ["0%", "-118%"],
+            rotateX: [fromRotate, toRotate],
+            rotateY: [0, -4, -1, 0],
             z: [0, 36, 10, 0],
           }
         : {
-            rotateY: toRotate,
+            x: ["0%", "118%"],
+            rotateY: [fromRotate, toRotate],
             rotateX: [0, -4, -1, 0],
             z: [0, 36, 10, 0],
-          };
+          }
+      : motionVariant === "cover-close"
+        ? vertical
+          ? {
+              y: [0, 0, -28, 0],
+              rotateX: [fromRotate, fromRotate, toRotate, toRotate],
+              rotateY: [0, -4, -1, 0],
+              z: [0, 36, 10, 0],
+            }
+          : {
+              x: [0, 0, 28, 0],
+              rotateY: [fromRotate, fromRotate, toRotate, toRotate],
+              rotateX: [0, -4, -1, 0],
+              z: [0, 36, 10, 0],
+            }
+        : vertical
+          ? {
+              rotateX: toRotate,
+              rotateY: [0, -4, -1, 0],
+              z: [0, 36, 10, 0],
+            }
+          : {
+              rotateY: toRotate,
+              rotateX: [0, -4, -1, 0],
+              z: [0, 36, 10, 0],
+            };
 
   const transition =
     motionVariant === "cover-open"
-      ? {
-          x: { duration: slideMs, ease: [0.22, 1, 0.36, 1] as const, times: [0, 0.55, 1] },
-          rotateY: {
-            duration: flipMs,
-            delay: slideMs * 0.55,
-            ease: [0.22, 1, 0.36, 1] as const,
-          },
-          rotateX: { ...FLIP_ARC, delay: slideMs * 0.55 },
-          z: { ...FLIP_ARC, delay: slideMs * 0.55 },
-        }
-      : motionVariant === "cover-close"
+      ? vertical
         ? {
-            x: { duration: flipMs, delay: slideMs, ease: [0.22, 1, 0.36, 1] as const },
-            rotateY: { duration: flipMs, ease: [0.22, 1, 0.36, 1] as const },
-            rotateX: FLIP_ARC,
-            z: FLIP_ARC,
+            y: { duration: slideMs, ease: [0.22, 1, 0.36, 1] as const, times: [0, 0.55, 1] },
+            rotateX: {
+              duration: flipMs,
+              delay: slideMs * 0.55,
+              ease: [0.22, 1, 0.36, 1] as const,
+            },
+            rotateY: { ...FLIP_ARC, delay: slideMs * 0.55 },
+            z: { ...FLIP_ARC, delay: slideMs * 0.55 },
           }
         : {
-            ...FLIP_TRANSITION,
-            rotateX: FLIP_ARC,
-            z: FLIP_ARC,
-          };
+            x: { duration: slideMs, ease: [0.22, 1, 0.36, 1] as const, times: [0, 0.55, 1] },
+            rotateY: {
+              duration: flipMs,
+              delay: slideMs * 0.55,
+              ease: [0.22, 1, 0.36, 1] as const,
+            },
+            rotateX: { ...FLIP_ARC, delay: slideMs * 0.55 },
+            z: { ...FLIP_ARC, delay: slideMs * 0.55 },
+          }
+      : motionVariant === "cover-close"
+        ? vertical
+          ? {
+              y: { duration: flipMs, delay: slideMs, ease: [0.22, 1, 0.36, 1] as const },
+              rotateX: { duration: flipMs, ease: [0.22, 1, 0.36, 1] as const },
+              rotateY: FLIP_ARC,
+              z: FLIP_ARC,
+            }
+          : {
+              x: { duration: flipMs, delay: slideMs, ease: [0.22, 1, 0.36, 1] as const },
+              rotateY: { duration: flipMs, ease: [0.22, 1, 0.36, 1] as const },
+              rotateX: FLIP_ARC,
+              z: FLIP_ARC,
+            }
+        : vertical
+          ? {
+              ...FLIP_TRANSITION,
+              rotateY: FLIP_ARC,
+              z: FLIP_ARC,
+            }
+          : {
+              ...FLIP_TRANSITION,
+              rotateX: FLIP_ARC,
+              z: FLIP_ARC,
+            };
 
   return (
     <motion.div
-      className={className}
+      className={`${className}${vertical ? " muji-flip-leaf--vertical" : ""}`}
       style={{ transformOrigin: origin, transformStyle: "preserve-3d" }}
       initial={{
         x: 0,
-        rotateY: fromRotate,
-        rotateX: 0,
+        y: 0,
+        rotateY: vertical ? 0 : fromRotate,
+        rotateX: vertical ? fromRotate : 0,
         z: 0,
       }}
       animate={animate}
@@ -408,6 +473,7 @@ export default function PhotographyBookOverlay({
   const [zoomSrc, setZoomSrc] = useState<string | null>(null);
   const wheelLock = useRef(false);
   const flipLock = useRef(false);
+  const verticalLayout = useAlbumVerticalLayout();
   const pendingFlipTarget = useRef<ViewIndex | null>(null);
   const flipFinishedRef = useRef(false);
   const viewIndexRef = useRef(-1);
@@ -522,20 +588,6 @@ export default function PhotographyBookOverlay({
     window.addEventListener("keydown", onKeyDown, true);
     return () => window.removeEventListener("keydown", onKeyDown, true);
   }, [close, zoomSrc]);
-
-  const onWheel = useCallback(
-    (e: React.WheelEvent) => {
-      if (zoomSrc) return;
-      e.preventDefault();
-      if (wheelLock.current) return;
-      wheelLock.current = true;
-      stepRef.current(e.deltaY > 0 ? 1 : -1);
-      window.setTimeout(() => {
-        wheelLock.current = false;
-      }, FLIP_MS);
-    },
-    [zoomSrc]
-  );
 
   if (!spreadCount) return null;
 
@@ -677,10 +729,11 @@ export default function PhotographyBookOverlay({
     const fromKind = viewKind(from, spreadCount);
     const toKind = viewKind(to, spreadCount);
     const onComplete = () => finishFlip(to);
+    const v = verticalLayout;
 
     if (fromKind === "front" && toKind === "content" && dir > 0) {
       return (
-        <CoverFlyout onComplete={onComplete}>
+        <CoverFlyout onComplete={onComplete} vertical={v}>
           {renderCoverFace("front")}
         </CoverFlyout>
       );
@@ -690,10 +743,11 @@ export default function PhotographyBookOverlay({
       return (
         <FlipLeaf
           className="muji-flip-leaf muji-flip-leaf--cover-close"
-          origin="right center"
+          origin={v ? "bottom center" : "right center"}
           fromRotate={0}
           toRotate={180}
           onComplete={onComplete}
+          vertical={v}
           front={renderPageFace(from, "left")}
           back={renderCoverFace("front")}
         />
@@ -704,10 +758,11 @@ export default function PhotographyBookOverlay({
       return (
         <FlipLeaf
           className="muji-flip-leaf muji-flip-leaf--cover-close muji-flip-leaf--page-right"
-          origin="left center"
+          origin={v ? "top center" : "left center"}
           fromRotate={0}
           toRotate={180}
           onComplete={onComplete}
+          vertical={v}
           front={renderPageFace(from, "right")}
           back={renderCoverFace("back")}
         />
@@ -718,10 +773,11 @@ export default function PhotographyBookOverlay({
       return (
         <FlipLeaf
           className="muji-flip-leaf muji-flip-leaf--cover-open muji-flip-leaf--page-right"
-          origin="right center"
+          origin={v ? "top center" : "right center"}
           fromRotate={180}
           toRotate={0}
           onComplete={onComplete}
+          vertical={v}
           front={renderCoverFace("back")}
           back={renderPageFace(to, "right")}
         />
@@ -733,10 +789,11 @@ export default function PhotographyBookOverlay({
         return (
           <FlipLeaf
             className="muji-flip-leaf muji-flip-leaf--page-right"
-            origin="left center"
+            origin={v ? "top center" : "left center"}
             fromRotate={0}
             toRotate={-180}
             onComplete={onComplete}
+            vertical={v}
             front={renderPageFace(from, "right")}
             back={renderPageFace(to, "left")}
           />
@@ -745,10 +802,11 @@ export default function PhotographyBookOverlay({
       return (
         <FlipLeaf
           className="muji-flip-leaf muji-flip-leaf--page-left"
-          origin="right center"
+          origin={v ? "bottom center" : "right center"}
           fromRotate={0}
           toRotate={180}
           onComplete={onComplete}
+          vertical={v}
           front={renderPageFace(from, "left")}
           back={renderPageFace(to, "right")}
         />
@@ -803,6 +861,41 @@ export default function PhotographyBookOverlay({
     [atBack, openFromCover]
   );
 
+  const albumSwipeNext = useCallback(() => {
+    if (zoomSrc || flipLock.current) return;
+    if (viewIndexRef.current >= spreadCount) return;
+    if (viewIndexRef.current === -1) {
+      openFromCover();
+      return;
+    }
+    stepRef.current(1);
+  }, [openFromCover, spreadCount, zoomSrc]);
+
+  const albumSwipePrev = useCallback(() => {
+    if (zoomSrc || flipLock.current) return;
+    if (viewIndexRef.current <= -1) return;
+    stepRef.current(-1);
+  }, [zoomSrc]);
+
+  const horizontalSwipe = useHorizontalSwipe(albumSwipeNext, albumSwipePrev);
+  const verticalSwipe = useVerticalSwipe(albumSwipeNext, albumSwipePrev);
+  const albumSwipeHandlers = verticalLayout ? verticalSwipe : horizontalSwipe;
+
+  useEffect(() => {
+    const onDocWheel = (e: WheelEvent) => {
+      if (zoomSrc) return;
+      e.preventDefault();
+      if (wheelLock.current) return;
+      wheelLock.current = true;
+      stepRef.current(e.deltaY > 0 ? 1 : -1);
+      window.setTimeout(() => {
+        wheelLock.current = false;
+      }, FLIP_MS);
+    };
+    window.addEventListener("wheel", onDocWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onDocWheel);
+  }, [zoomSrc]);
+
   const handleOverlayClick = useCallback(
     (e: React.MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -831,7 +924,6 @@ export default function PhotographyBookOverlay({
           exit={{ opacity: 0, y: 16 }}
           transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
           className="muji-album-shell relative z-10 select-none pointer-events-none"
-          onWheel={onWheel}
         >
           <div className="muji-album-book muji-album-interactive">
             <button
@@ -847,13 +939,18 @@ export default function PhotographyBookOverlay({
             </button>
 
             <div className="muji-album-stage">
-              <div className="muji-album-viewport">
+              <div
+                className={`muji-album-viewport ${verticalLayout ? "touch-pan-x" : "touch-pan-y"}`}
+                {...albumSwipeHandlers}
+              >
                 <div className="muji-album-book-inner">
                   <div className="muji-album-shadow" aria-hidden />
                   <div
                     className={`muji-book-frame ${
                       frameSpread ? "muji-book-frame--spread" : "muji-book-frame--closed"
-                    }${isCoverFlip ? " muji-book-frame--cover-flip" : ""}`}
+                    }${isCoverFlip ? " muji-book-frame--cover-flip" : ""}${
+                      verticalLayout ? " muji-book-frame--vertical" : ""
+                    }`}
                   >
                     {renderBase()}
                     {renderFlipLeaf()}

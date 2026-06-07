@@ -97,29 +97,25 @@
   justify-content: center;
 }
 
-/* View details — desktop: gutter center; mobile: below chat */
+/* View details — desktop landscape: gutter center; portrait / tablet / phone: below chat */
 .chat-footer-action-slot {
   pointer-events: auto;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  width: 100%;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 1024px) and (orientation: landscape) {
   .chat-footer-action-slot {
     position: absolute;
     bottom: 1rem;
     left: 100%;
     width: calc(50vw - 50% - 1.5rem);
+    margin-top: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-}
-
-@media (max-width: 639px) {
-  .chat-footer-action-slot {
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-    width: 100%;
   }
 }
 
@@ -296,6 +292,13 @@
 /* AI Projects — Cover Flow overlay */
 .ai-coverflow-overlay {
   touch-action: none;
+  padding:
+    max(0.75rem, env(safe-area-inset-top))
+    max(0.75rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom))
+    max(0.75rem, env(safe-area-inset-left));
+  align-items: center;
+  justify-content: center;
 }
 
 .ai-coverflow-backdrop {
@@ -305,7 +308,40 @@
 }
 
 .ai-coverflow-shell {
+  position: relative;
   width: min(820px, 96vw);
+}
+
+.ai-coverflow-close {
+  position: fixed;
+  top: max(0.75rem, env(safe-area-inset-top));
+  left: max(0.75rem, env(safe-area-inset-left));
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: #a1a1aa;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.ai-coverflow-close:hover {
+  color: #52525b;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+@media (orientation: landscape) and (min-height: 480px) {
+  .ai-coverflow-close {
+    top: max(1.25rem, env(safe-area-inset-top));
+    left: max(0.75rem, env(safe-area-inset-left));
+    width: 1.75rem;
+    height: 1.75rem;
+  }
 }
 
 .ai-coverflow-viewport {
@@ -422,24 +458,30 @@
 }
 
 .product-list-close {
-  position: absolute;
-  top: -2.5rem;
-  left: 0;
+  position: static;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2rem;
+  height: 2rem;
   color: #a1a1aa;
   background: transparent;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   transition: color 0.15s ease, background-color 0.15s ease;
 }
 
 .product-list-close:hover {
   color: #52525b;
   background: rgba(255, 255, 255, 0.35);
+}
+
+.product-list-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 18px;
 }
 
 .product-list-panel {
@@ -453,7 +495,9 @@
 }
 
 .product-list-heading {
-  padding: 0 12px 18px;
+  padding: 0;
+  flex: 1;
+  min-width: 0;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -631,6 +675,15 @@
   -webkit-backdrop-filter: blur(3px);
 }
 
+.muji-album-overlay:has(.muji-book-frame--vertical) {
+  padding:
+    max(0.75rem, env(safe-area-inset-top))
+    0
+    max(0.75rem, env(safe-area-inset-bottom));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .muji-album-shell {
   width: min(98vw, 84rem);
   max-width: 84rem;
@@ -703,23 +756,28 @@
   transform-style: preserve-3d;
 }
 
-/* Album — closed cover = exactly one open page; spread = left + spine + right */
+/* Album — desktop horizontal matches go-live; vertical uses aspect-ratio stack */
 .muji-book-frame {
+  --muji-photo-aspect: 1.2;
+  position: relative;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  overflow: hidden;
+}
+
+.muji-book-frame:not(.muji-book-frame--vertical) {
   --muji-spread-w: min(96vw, 60rem);
   --muji-spread-h: min(52vh, 26rem);
   --muji-spine-w: 10px;
   --muji-page-w: calc((var(--muji-spread-w) - var(--muji-spine-w)) / 2);
-  position: relative;
-  margin: 0 auto;
-  transform-style: preserve-3d;
 }
 
-.muji-book-frame--closed {
+.muji-book-frame:not(.muji-book-frame--vertical).muji-book-frame--closed {
   width: var(--muji-page-w);
   height: var(--muji-spread-h);
 }
 
-.muji-book-frame--spread {
+.muji-book-frame:not(.muji-book-frame--vertical).muji-book-frame--spread {
   width: var(--muji-spread-w);
   height: var(--muji-spread-h);
 }
@@ -795,6 +853,7 @@
 .muji-cover-preview {
   position: absolute;
   inset: 0;
+  z-index: 1;
   filter: blur(42px) saturate(0.65) brightness(1.05);
   opacity: 0.18;
   transform: scale(1.12);
@@ -816,6 +875,7 @@
   -webkit-backdrop-filter: blur(40px) saturate(125%);
   border: 0.5px solid rgba(255, 255, 255, 0.68);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  pointer-events: none;
 }
 
 .muji-cover-label {
@@ -870,8 +930,13 @@
     var(--muji-spine-w, 10px)
     calc((100% - var(--muji-spine-w, 10px)) / 2);
   width: 100%;
-  height: 100%;
+  height: auto;
   transform-style: preserve-3d;
+  align-items: stretch;
+}
+
+.muji-book-frame:not(.muji-book-frame--vertical) .muji-spread {
+  height: 100%;
 }
 
 .muji-page {
@@ -899,11 +964,18 @@
 }
 
 .muji-page--photo {
-  background: #f3f2ef;
+  background: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border: none;
   box-shadow: none;
+  height: auto;
+  aspect-ratio: var(--muji-photo-aspect, 1.2);
+}
+
+.muji-book-frame:not(.muji-book-frame--vertical) .muji-page--photo {
+  height: 100%;
+  aspect-ratio: auto;
 }
 
 .muji-page--invisible {
@@ -943,6 +1015,8 @@
   max-width: var(--muji-spine-w, 10px);
   flex-shrink: 0;
   align-self: stretch;
+  height: auto;
+  min-height: 0;
   background: linear-gradient(
     90deg,
     rgba(0, 0, 0, 0.05) 0%,
@@ -950,6 +1024,114 @@
     rgba(0, 0, 0, 0.06) 100%
   );
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Portrait / short landscape — vertical stack; height capped to fit viewport chrome */
+.muji-book-frame--vertical {
+  --muji-album-chrome: 10rem;
+  --muji-spine-w: 8px;
+  --muji-page-h: min(
+    calc(88vw / var(--muji-photo-aspect)),
+    calc((100svh - var(--muji-album-chrome)) / 2 - var(--muji-spine-w) / 2)
+  );
+  --muji-spread-w: calc(var(--muji-page-h) * var(--muji-photo-aspect));
+  --muji-page-w: var(--muji-spread-w);
+  --muji-spread-h: calc(var(--muji-page-h) * 2 + var(--muji-spine-w));
+}
+
+.muji-book-frame--vertical.muji-book-frame--closed:not(.muji-book-frame--cover-flip) {
+  --muji-closed-chrome: 7.5rem;
+  --muji-page-h: min(
+    calc(88vw / var(--muji-photo-aspect)),
+    calc(100svh - var(--muji-closed-chrome))
+  );
+  --muji-spread-w: calc(var(--muji-page-h) * var(--muji-photo-aspect));
+  width: var(--muji-spread-w);
+  height: var(--muji-page-h);
+}
+
+.muji-book-frame--vertical.muji-book-frame--closed {
+  width: var(--muji-spread-w);
+  height: var(--muji-page-h);
+}
+
+.muji-book-frame--vertical.muji-book-frame--cover-flip.muji-book-frame--closed {
+  height: var(--muji-spread-h);
+}
+
+.muji-book-frame--vertical.muji-book-frame--spread {
+  width: var(--muji-spread-w);
+  height: auto;
+}
+
+.muji-book-frame--vertical .muji-spread {
+  grid-template-columns: 1fr;
+  grid-template-rows: var(--muji-page-h) var(--muji-spine-w) var(--muji-page-h);
+  height: auto;
+}
+
+.muji-book-frame--vertical .muji-spine {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  height: var(--muji-spine-w);
+  min-height: var(--muji-spine-w);
+  max-height: var(--muji-spine-w);
+  align-self: center;
+}
+
+.muji-book-frame--vertical .muji-page--left {
+  border-radius: 10px 10px 4px 4px;
+}
+
+.muji-book-frame--vertical .muji-page--right {
+  border-radius: 4px 4px 10px 10px;
+}
+
+.muji-book-frame--vertical .muji-page-turn--prev {
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: var(--muji-page-h);
+}
+
+.muji-book-frame--vertical .muji-page-turn--next {
+  top: auto;
+  bottom: 0;
+  width: 100%;
+  height: var(--muji-page-h);
+}
+
+.muji-flip-leaf--vertical.muji-flip-leaf--page-right,
+.muji-flip-leaf--vertical.muji-flip-leaf--cover-open.muji-flip-leaf--page-right,
+.muji-flip-leaf--vertical.muji-flip-leaf--cover-close.muji-flip-leaf--page-right {
+  left: 0;
+  right: 0;
+  top: auto;
+  bottom: 0;
+  width: 100%;
+  height: var(--muji-page-h);
+  border-radius: 4px 4px 10px 10px;
+}
+
+.muji-flip-leaf--vertical.muji-flip-leaf--page-left,
+.muji-flip-leaf--vertical.muji-flip-leaf--cover-close:not(.muji-flip-leaf--page-right) {
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: var(--muji-page-h);
+  border-radius: 10px 10px 4px 4px;
+}
+
+.muji-flip-leaf--vertical.muji-flip-leaf--cover-flyout {
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px 10px 4px 4px;
 }
 
 /* Page flip — only the turning leaf moves */
@@ -1041,6 +1223,10 @@
   transform: rotateY(180deg);
 }
 
+.muji-flip-leaf--vertical .muji-flip-leaf__face--back {
+  transform: rotateX(180deg);
+}
+
 .muji-flip-leaf .muji-page {
   width: 100%;
   height: 100%;
@@ -1105,40 +1291,16 @@
   width: 100%;
   height: 100%;
   min-height: 0;
-  padding: 5px;
+  padding: 0;
   border: none;
   box-sizing: border-box;
-  background: #f3f2ef;
+  background: transparent;
   cursor: zoom-in;
 }
 
-.muji-page-photo::before {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  z-index: 2;
-  border-radius: 2px;
-  border: 0.5px solid rgba(255, 255, 255, 0.32);
-  box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.38),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
-  pointer-events: none;
-}
-
+.muji-page-photo::before,
 .muji-page-photo::after {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  z-index: 3;
-  border-radius: 2px;
-  background: linear-gradient(
-    140deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 28%,
-    transparent 72%,
-    rgba(255, 255, 255, 0.04) 100%
-  );
-  pointer-events: none;
+  display: none;
 }
 
 .muji-page-photo--slot {
@@ -1164,6 +1326,8 @@
   width: 100%;
   height: 100%;
   border-radius: 2px;
+  object-fit: contain;
+  object-position: center;
 }
 
 .muji-page-photo--empty {
@@ -1220,42 +1384,148 @@
   background: #71717a;
 }
 
-@media (max-width: 900px) {
-  .muji-album-shell {
-    width: min(98vw, 100%);
+@media (orientation: landscape) and (min-height: 480px) {
+  .muji-album-book:not(:has(.muji-book-frame--vertical)) .photo-book-close {
+    position: fixed;
+    top: max(1.25rem, env(safe-area-inset-top));
+    left: max(0.75rem, env(safe-area-inset-left));
+    z-index: 110;
+  }
+}
+
+.muji-album-book:has(.muji-book-frame--vertical.muji-book-frame--spread) .photo-book-close {
+  position: static;
+  align-self: flex-start;
+  margin: 0 0 0.5rem 0.25rem;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+}
+
+.muji-album-book:has(.muji-book-frame--vertical.muji-book-frame--spread) {
+  width: 100%;
+  align-items: stretch;
+  padding: 0 0.5rem;
+}
+
+.muji-album-book:has(.muji-book-frame--vertical.muji-book-frame--spread) .muji-album-location {
+  flex-shrink: 0;
+}
+
+.muji-album-book:has(.muji-book-frame--vertical.muji-book-frame--spread) .muji-album-progress {
+  flex-shrink: 0;
+  padding-bottom: 0.25rem;
+}
+
+/* Portrait closed cover/back — center in viewport; chrome pinned to edges */
+.muji-album-book:has(.muji-book-frame--vertical.muji-book-frame--closed:not(.muji-book-frame--cover-flip)) {
+  width: min(98vw, 100%);
+  min-height: calc(
+    100svh
+    - max(0.75rem, env(safe-area-inset-top))
+    - max(0.75rem, env(safe-area-inset-bottom))
+  );
+  justify-content: center;
+}
+
+.muji-album-book:has(.muji-book-frame--vertical.muji-book-frame--closed:not(.muji-book-frame--cover-flip)) .photo-book-close {
+  position: absolute;
+  top: 0;
+  left: 0.25rem;
+  margin: 0;
+  z-index: 2;
+}
+
+.muji-album-book:has(.muji-book-frame--vertical.muji-book-frame--closed:not(.muji-book-frame--cover-flip)) .muji-album-stage {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.muji-album-book:has(.muji-book-frame--vertical.muji-book-frame--closed:not(.muji-book-frame--cover-flip)) .muji-album-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-top: 0;
+  padding-bottom: 0.25rem;
+}
+
+@media (orientation: portrait), ((orientation: landscape) and (max-height: 479px)) {
+  .muji-album-overlay:has(.muji-book-frame--vertical.muji-book-frame--spread) {
+    align-items: flex-start;
+    justify-content: center;
   }
 
   .muji-album-viewport {
-    max-width: 100%;
+    perspective-origin: 50% 42%;
+  }
+}
+
+@media (max-width: 1023px) {
+  .product-list-overlay {
+    align-items: stretch;
+    justify-content: flex-start;
+    padding:
+      max(12px, env(safe-area-inset-top))
+      12px
+      max(12px, env(safe-area-inset-bottom));
   }
 
-  .muji-book-frame {
-    --muji-spread-w: min(98vw, 100%);
-    --muji-spread-h: min(48vh, 22rem);
-  }
-
-  .muji-spread {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 8px 1fr;
-  }
-
-  .muji-spine {
+  .product-list-shell {
     width: 100%;
-    height: 8px;
+    max-width: none;
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
-  .muji-page-turn--prev {
-    left: 0;
-    right: 0;
-    top: 0;
-    width: 100%;
-    height: calc((100% - 8px) / 2);
+  .product-list-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-radius: 14px;
+    padding: 16px 14px 14px;
   }
 
-  .muji-page-turn--next {
-    top: auto;
-    bottom: 0;
+  .product-list-body {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .product-list-viewport {
+    max-height: none;
+    flex: 1;
+  }
+}
+
+@media (max-width: 767px) {
+  .ai-coverflow-shell {
     width: 100%;
-    height: calc((100% - 8px) / 2);
+    max-width: 100vw;
+    padding: 0 6px;
+  }
+
+  .ai-coverflow-viewport {
+    min-height: min(44vh, 300px);
+    height: min(48vh, 360px);
+  }
+
+  .ai-coverflow-card-shell,
+  .ai-coverflow-card {
+    width: min(280px, 46vw);
+  }
+
+  .cover-art-3d__img {
+    width: clamp(5.25rem, 24vw, 7.75rem);
+    height: clamp(5.25rem, 24vw, 7.75rem);
+  }
+
+  .muji-album-viewport {
+    touch-action: pan-y;
   }
 }
