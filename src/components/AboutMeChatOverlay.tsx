@@ -22,9 +22,13 @@ export default function AboutMeChatOverlay({
 
   return (
     <div className="fixed inset-0 z-[100] pointer-events-none">
-      <div className="absolute inset-0 bg-white/55 backdrop-blur-[2px] pointer-events-auto" aria-hidden />
+      <div
+        className="absolute inset-0 bg-white/55 backdrop-blur-[2px] pointer-events-auto cursor-none"
+        onClick={onClose}
+        aria-hidden
+      />
 
-      <div className="relative z-10 pointer-events-auto">
+      <div className="relative z-10 pointer-events-none">
         <ChatPopupWindow
           isOpen
           onClose={onClose}

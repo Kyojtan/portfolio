@@ -484,7 +484,8 @@ export default function ChatPopupWindow({
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 30 }}
           transition={{ type: "spring", stiffness: 350, damping: 26 }}
-          className={`w-full overflow-hidden window-glass flex flex-col font-sans text-zinc-800 relative transition-all duration-300 ease-in-out ${shaking ? "animate-shake-nudge" : ""} ${isMaximized ? "w-screen h-screen max-w-none max-h-none rounded-none" : "max-w-3xl h-[85vh] max-h-[680px] rounded-2xl"}`}
+          className={`w-full overflow-hidden window-glass flex flex-col font-sans text-zinc-800 relative transition-all duration-300 ease-in-out ${shaking ? "animate-shake-nudge" : ""} ${isMaximized ? "w-screen h-screen max-w-none max-h-none rounded-none" : "w-full max-w-[min(48rem,calc(100vw-1.25rem))] h-[min(85vh,680px)] rounded-2xl"}`}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="h-12 bg-white/25 backdrop-blur-md flex items-center justify-between px-4 border-b border-white/40 shrink-0 select-none relative">
             <div className="flex items-center gap-2 z-10 group/macdots">
@@ -704,22 +705,23 @@ export default function ChatPopupWindow({
     return (
       <AnimatePresence>
         <div
-          className={`fixed inset-0 z-50 flex items-center justify-center pointer-events-none transition-all duration-300 ${isMaximized ? "p-0" : "p-4 sm:p-6"}`}
+          className={`fixed inset-0 z-50 flex items-center justify-center pointer-events-none transition-all duration-300 ${isMaximized ? "p-0" : "p-3 sm:p-6"}`}
         >
-          <div className="pointer-events-auto w-full flex items-center justify-center px-4 sm:px-6">
-            {isMaximized ? (
-              shell
-            ) : (
-              <div className="relative mx-auto w-full max-w-3xl">
-                {shell}
-                {footerAction && (
-                  <div className="chat-footer-action-slot">
-                    {footerAction}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          {isMaximized ? (
+            <div className="pointer-events-auto w-full h-full">{shell}</div>
+          ) : (
+            <div
+              className="pointer-events-auto relative mx-auto w-full max-w-[min(48rem,calc(100vw-1.25rem))]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {shell}
+              {footerAction && (
+                <div className="chat-footer-action-slot">
+                  {footerAction}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </AnimatePresence>
     );
@@ -728,9 +730,15 @@ export default function ChatPopupWindow({
   return (
     <AnimatePresence>
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs transition-all duration-300 ${isMaximized ? "p-0" : "p-4 sm:p-6"}`}
+        className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs transition-all duration-300 ${isMaximized ? "p-0" : "p-3 sm:p-6"}`}
+        onClick={() => (onEscape ?? onClose)()}
       >
-        {shell}
+        <div
+          className={`pointer-events-auto ${isMaximized ? "w-full h-full" : "w-full max-w-[min(48rem,calc(100vw-1.25rem))]"}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {shell}
+        </div>
       </div>
     </AnimatePresence>
   );

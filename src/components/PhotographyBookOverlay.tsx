@@ -554,7 +554,13 @@ export default function PhotographyBookOverlay({
   goToRef.current = goTo;
 
   const backToCover = useCallback(() => {
-    goToRef.current(-1);
+    if (flipLock.current) return;
+    flipLock.current = false;
+    pendingFlipTarget.current = null;
+    flipFinishedRef.current = false;
+    viewIndexRef.current = -1;
+    setViewIndex(-1);
+    setFlip(null);
   }, []);
 
   const openFromCover = useCallback(() => {
@@ -958,7 +964,7 @@ export default function PhotographyBookOverlay({
                       type="button"
                       className="muji-page-turn muji-page-turn--prev"
                       onClick={handleTurnPrev}
-                      disabled={atCover || !!flip}
+                      disabled={atCover || atBack || !!flip}
                       aria-label={lang === "en" ? "Previous page" : "上一页"}
                     />
                     <button
