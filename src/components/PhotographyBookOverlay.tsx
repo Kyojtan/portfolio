@@ -15,7 +15,6 @@ import { useAlbumVerticalLayout } from "../utils/useMediaQuery";
 
 interface PhotographyBookOverlayProps {
   lang: "zh" | "zt" | "en";
-  onActiveChange?: (active: boolean) => void;
 }
 
 const FLIP_MS = 1020;
@@ -459,10 +458,7 @@ function FlipLeaf({
   );
 }
 
-export default function PhotographyBookOverlay({
-  lang,
-  onActiveChange,
-}: PhotographyBookOverlayProps) {
+export default function PhotographyBookOverlay({ lang }: PhotographyBookOverlayProps) {
   const navigate = useNavigate();
   const spreads = PHOTO_SPREADS;
   const spreadCount = spreads.length;
@@ -486,11 +482,6 @@ export default function PhotographyBookOverlay({
 
   const coverHint =
     lang === "en" ? "The flavor of life" : lang === "zt" ? "世界愛" : "世界爱";
-
-  useEffect(() => {
-    onActiveChange?.(true);
-    return () => onActiveChange?.(false);
-  }, [onActiveChange]);
 
   useEffect(() => {
     spreads.forEach((spread) => {

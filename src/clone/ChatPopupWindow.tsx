@@ -16,6 +16,11 @@ interface ChatPopupWindowProps {
   onEscape?: () => void;
   /** Rendered beside the chat panel bottom edge; hidden when maximized. */
   footerAction?: ReactNode;
+  /** Controlled maximize (optional — used by About Me overlay). */
+  isMaximized?: boolean;
+  onMaximizedChange?: (maximized: boolean) => void;
+  /** Fired when the user scrolls the message list (e.g. hide overlay side nav). */
+  onUserScroll?: () => void;
 }
 
 function normalizeCloneResponse(text: string, lang: Language): string {
@@ -192,12 +197,17 @@ export default function ChatPopupWindow({
   backdrop = "default",
   onEscape,
   footerAction,
+  isMaximized: isMaximizedProp,
+  onMaximizedChange,
+  onUserScroll,
 }: ChatPopupWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [typewriterFreeze, setTypewriterFreeze] = useState(0);
-  const [isMaximized, setIsMaximized] = useState(false);
+  const [isMaximizedInternal, setIsMaximizedInternal] = useState(false);
+  const isMaximized = isMaximizedProp ?? isMaximizedInternal;
+  const setIsMaximized = onMaximizedChange ?? setIsMaximizedInternal;
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [shaking, setShaking] = useState(false);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
@@ -213,6 +223,8 @@ export default function ChatPopupWindow({
   const stopClickGuardRef = useRef(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const chatHydratedRef = useRef(false);
+  const userScrollLockRef = useRef(false);
+  const scrollIdleTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const isAnimatingReply = messages.some((m) => m.role === "ai" && m.isTyping);
   const isBusy = isTyping || isAnimatingReply;
@@ -265,8 +277,11 @@ export default function ChatPopupWindow({
   }, [isOpen, onClose]);
 
   useEffect(() => {
+    if (userScrollLockRef.current) return;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
+
+  useEffect(() => () => clearTimeout(scrollIdleTimerRef.current), []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -280,9 +295,19 @@ export default function ChatPopupWindow({
     }
   }, [messages]);
 
+  const markUserScrolling = useCallback(() => {
+    userScrollLockRef.current = true;
+    onUserScroll?.();
+    clearTimeout(scrollIdleTimerRef.current);
+    scrollIdleTimerRef.current = setTimeout(() => {
+      userScrollLockRef.current = false;
+    }, 1400);
+  }, [onUserScroll]);
+
   const handleScroll = () => {
     const container = scrollContainerRef.current;
     if (!container) return;
+    markUserScrolling();
     const isScrolledUp = container.scrollHeight - container.scrollTop - container.clientHeight > 140;
     setShowScrollBottom(isScrolledUp);
   };
@@ -532,7 +557,15 @@ export default function ChatPopupWindow({
                 </button>
               </div>
 
-              <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto px-5 py-6 space-y-6 relative">
+              <div
+                ref={scrollContainerRef}
+                onScroll={handleScroll}
+                onWheel={markUserScrolling}
+                onMouseDown={(e) => {
+                  if (e.button !== 0) markUserScrolling();
+                }}
+                className="flex-1 overflow-y-auto px-5 py-6 space-y-6 relative"
+              >
                 {messages.map((msg) => {
                   const isAi = msg.role === "ai";
                   return (

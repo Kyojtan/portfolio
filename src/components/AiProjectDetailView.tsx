@@ -5,7 +5,7 @@ import {
   MapPin, Database, Network, Music, HelpCircle,
   Sliders, ArrowLeft, ChevronLeft, ChevronRight, Send, CheckCircle, FileText, Smartphone, Laptop
 } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AI_PROJECTS, DEMO_VIDEOS } from "../data/aiProjects";
 
 interface AiProjectDetailViewProps {
@@ -15,7 +15,7 @@ interface AiProjectDetailViewProps {
 
 function ProjectDemoVideo({ src }: { src: string }) {
   return (
-    <div className="w-full relative aspect-[16/10] bg-black rounded-xl overflow-hidden shadow-2xl border border-black/80">
+    <div className="healing-demo-video">
       <video
         className="absolute inset-0 w-full h-full object-contain"
         src={src}
@@ -99,7 +99,7 @@ function EtherealBubbleText({ text }: { text: string }) {
           return (
             <span
               key={tIdx}
-              className="char"
+              className="healing-char"
               style={{ animationDelay: `${delay}s` }}
             >
               {token.text}
@@ -116,7 +116,7 @@ function EtherealBubbleText({ text }: { text: string }) {
               return (
                 <span
                   key={charIdx}
-                  className="char"
+                  className="healing-char"
                   style={{ animationDelay: `${delay}s` }}
                 >
                   {char}
@@ -316,7 +316,7 @@ export default function AiProjectDetailView({ projectId, lang }: AiProjectDetail
               <button
                 type="button"
                 onClick={goPrevProject}
-                className="ai-nav-arrow ai-nav-arrow--side fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-30"
+                className="ai-nav-arrow ai-nav-arrow--side fixed left-4 md:left-8 z-30"
                 aria-label={lang === "en" ? "Previous project" : "上一个作品"}
               >
                 <ChevronLeft />
@@ -324,7 +324,7 @@ export default function AiProjectDetailView({ projectId, lang }: AiProjectDetail
               <button
                 type="button"
                 onClick={goNextProject}
-                className="ai-nav-arrow ai-nav-arrow--side fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-30"
+                className="ai-nav-arrow ai-nav-arrow--side fixed right-4 md:right-8 z-30"
                 aria-label={lang === "en" ? "Next project" : "下一个作品"}
               >
                 <ChevronRight />
@@ -344,86 +344,32 @@ export default function AiProjectDetailView({ projectId, lang }: AiProjectDetail
               <div className="flex-1 min-h-0 overflow-y-auto px-8 md:px-16 lg:px-24 pt-4 pb-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start max-w-7xl mx-auto w-full">
               
-              {/* Left Column — dialogue */}
-              <div className="lg:col-span-4 flex flex-col bg-gray-50/[0.3] rounded-2xl border border-gray-100 p-6 md:p-8 relative overflow-hidden min-h-[420px]">
-                {/* Micro Ambient Grid Noise */}
-                <div className="absolute inset-0 bg-[radial-gradient(#e1f0ff_1px,transparent_1px)] [background-size:16px_16px] opacity-25 pointer-events-none" />
-                
-                <div className="border-b border-gray-100 pb-4 mb-6 z-10">
-                  <span className="text-[10px] font-bold font-mono tracking-widest text-[#1A1A1A] uppercase flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-accent animate-spin-slow" />
-                    {lang === "en" ? "PROJECT INSPIRATION" : "项目灵感"}
-                  </span>
+              {/* Left Column — dialogue (healing blue-white card) */}
+              <div className="lg:col-span-4 healing-chat-card">
+                <div className="healing-chat-header">
+                  <div className="healing-profile-pill">
+                    <div className="healing-profile-avatar">
+                      <img
+                        src="/xujun-clone-avatar.png"
+                        alt=""
+                        referrerPolicy="no-referrer"
+                      />
+                      <span className="healing-profile-online" aria-hidden="true" />
+                    </div>
+                    <div className="healing-profile-text">
+                      <span className="healing-profile-name">Xujun Clone</span>
+                      <span className="healing-profile-status">
+                        {lang === "en"
+                          ? "Last seen recently"
+                          : lang === "zt"
+                            ? "不久前在線"
+                            : "最近在线"}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Messages view */}
-                <div className="flex-1 flex flex-col gap-6 overflow-y-auto max-h-[500px] pt-8 pb-4 pr-2 z-10 dialogue-container">
-                  <style>{`
-                    .dialogue-container {
-                      --apple-gray: rgba(245, 245, 247, 0.60);  
-                      --apple-blue: rgba(0, 122, 255, 0.12);   
-                      --text-main: rgba(60, 60, 67, 0.85);
-                      --text-blue: rgba(0, 86, 179, 0.85);
-                    }
-                    
-                    .ethereal-bubble {
-                      position: relative;
-                      padding: 13px 20px;
-                      font-size: 13.5px;
-                      font-weight: 450;
-                      letter-spacing: 0.05em; 
-                      line-height: 1.6;
-                      border-radius: 24px;
-                      transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-                      backdrop-filter: blur(50px) saturate(160%);
-                      -webkit-backdrop-filter: blur(50px) saturate(160%);
-                      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02), inset 0 0 0 1px rgba(255, 255, 255, 0.4); 
-                      max-width: 82%;
-                      animation: gentleFloat 8s ease-in-out infinite;
-                    }
-
-                    .ethereal-bubble:hover {
-                      transform: scale(1.03) translateY(-3px) !important;
-                      box-shadow: 0 20px 50px rgba(0, 80, 255, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
-                    }
-
-                    @keyframes gentleFloat { 
-                      0%, 100% { transform: translateY(0px); } 
-                      50% { transform: translateY(-5px); } 
-                    }
-
-                    .msg-row-ai { justify-content: flex-start; }
-                    .msg-row-user { justify-content: flex-end; }
-
-                    .bubble-ai { 
-                      background: var(--apple-gray) !important; 
-                      color: var(--text-main) !important; 
-                      border-bottom-left-radius: 6px !important; 
-                    }
-                    
-                    .bubble-user { 
-                      background: var(--apple-blue) !important; 
-                      color: var(--text-blue) !important; 
-                      border-bottom-right-radius: 6px !important; 
-                      animation-delay: 2s; 
-                    }
-
-                    .char { 
-                      display: inline-block; 
-                      opacity: 0; 
-                      filter: blur(8px); 
-                      transform: translateY(1px); 
-                      animation: mistReveal 0.2s ease-out forwards; 
-                    }
-                    
-                    @keyframes mistReveal { 
-                      to { 
-                        opacity: 1; 
-                        filter: blur(0px); 
-                        transform: translateY(0px); 
-                      } 
-                    }
-                  `}</style>
+                <div className="healing-chat-messages">
                   <AnimatePresence initial={false}>
                     {renderedMessages.map((msg, mIdx) => {
                        const isUser = msg.role === "user";
@@ -435,28 +381,14 @@ export default function AiProjectDetailView({ projectId, lang }: AiProjectDetail
                            transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
                            className={`flex flex-col ${isUser ? "items-end" : "items-start"} w-full`}
                          >
-                           <span 
-                             className={`text-[9px] font-mono tracking-widest font-bold uppercase mb-1 px-2.5 opacity-60 ${
-                               isUser ? "text-[#007AFF]" : "text-gray-400"
-                             }`}
-                           >
-                             {isUser
-                               ? lang === "en"
-                                 ? "Xujun"
-                                 : "🗨️ 我"
-                               : lang === "en"
-                                 ? "Digital Twin"
-                                 : lang === "zt"
-                                   ? "數位分身"
-                                   : "数字分身"}
-                           </span>
-                           
-                           <div
-                             className={`ethereal-bubble ${
-                               isUser ? "bubble-user" : "bubble-ai"
-                             }`}
-                           >
-                             <EtherealBubbleText text={msg.text} />
+                           <div className="max-w-[88%]">
+                             <div
+                               className={`healing-bubble ${
+                                 isUser ? "healing-bubble--user" : "healing-bubble--ai"
+                               }`}
+                             >
+                               <EtherealBubbleText text={msg.text} />
+                             </div>
                            </div>
                          </motion.div>
                        );
@@ -465,28 +397,25 @@ export default function AiProjectDetailView({ projectId, lang }: AiProjectDetail
 
                   {visibleCount < currentLangDialogue.length && (
                     <div className="flex justify-start pt-1">
-                      <div className="bg-white/80 px-4 py-2.5 rounded-2xl flex items-center gap-1 shadow-xs border border-gray-100/40">
-                        <span className="w-1.5 h-1.5 bg-accent rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                        <span className="w-1.5 h-1.5 bg-accent rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                        <span className="w-1.5 h-1.5 bg-accent rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                      <div className="healing-typing" aria-hidden="true">
+                        <span className="healing-typing-dot animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <span className="healing-typing-dot animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <span className="healing-typing-dot animate-bounce" style={{ animationDelay: "300ms" }} />
                       </div>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Right Column: 3/5 portion - Interactive Demo Video & Application Playgrounds */}
-              <div className="lg:col-span-8 flex flex-col bg-white rounded-2xl border border-gray-100 overflow-hidden min-h-[480px] shadow-xs">
-                {/* Toolbar */}
-                <div className="flex justify-between items-center bg-gray-50/70 border-b border-gray-100 px-6 py-4">
-                  <span className="text-xs font-bold font-mono tracking-tight text-gray-600 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: activeProj?.color }} />
-                    {lang === "en" ? "DEMO PLAYBACK" : "演示视频"}
+              {/* Right Column — demo (healing glass card) */}
+              <div className="lg:col-span-8 healing-demo-card">
+                <div className="healing-demo-header">
+                  <span className="healing-demo-header__title">
+                    {lang === "en" ? "Demo playback" : "演示视频"}
                   </span>
                 </div>
 
-                {/* Dynamic Workspace based on Active Project */}
-                <div className="flex-1 p-6 md:p-8 flex flex-col justify-center relative bg-[#FCFCFD]">
+                <div className="healing-demo-body">
 
                   {/* TAB 1: 演示视频 (demo) */}
                   {activeTab === "demo" && (
@@ -798,12 +727,6 @@ export default function AiProjectDetailView({ projectId, lang }: AiProjectDetail
 
             </div>
               </div>
-
-              <footer className="shrink-0 px-8 md:px-12 py-12 flex items-center justify-center text-gray-400">
-                <Link to="/" className="hover:text-black transition-colors cursor-none" aria-label={lang === "en" ? "Home" : "主页"}>
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>
-                </Link>
-              </footer>
     </motion.div>
   );
 }

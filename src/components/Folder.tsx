@@ -44,7 +44,8 @@ export default function Folder({ color, label, to, onOpen }: FolderProps) {
         <button
           type="button"
           onClick={onOpen}
-          className="flex flex-col items-center gap-3 group cursor-none bg-transparent border-0 p-0"
+          onMouseDown={(e) => e.preventDefault()}
+          className="flex flex-col items-center gap-3 group cursor-none bg-transparent border-0 p-0 outline-none focus:outline-none focus-visible:outline-none"
         >
           {inner}
         </button>

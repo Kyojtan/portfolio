@@ -46,7 +46,7 @@ export const PROJECTS = [
     id: "about",
     color: "#E0C3FC", // Soft Purple/Lavender
     labelKey: "aboutMe",
-    path: "/category/about"
+    path: "#"
   }
 ];
 

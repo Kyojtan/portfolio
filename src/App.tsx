@@ -124,7 +124,7 @@ export default function App() {
         } />
         <Route path="/category/ai/:projectId" element={
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <AiProjectDetailPage lang={lang} setLang={setLang} />
+            <AiProjectDetailPage lang={lang} />
           </motion.div>
         } />
         <Route path="/category/:id" element={

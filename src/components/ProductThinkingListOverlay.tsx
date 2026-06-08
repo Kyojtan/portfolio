@@ -15,7 +15,6 @@ export interface ProductArticle {
 interface ProductThinkingListOverlayProps {
   articles: ProductArticle[];
   lang: "zh" | "zt" | "en";
-  onActiveChange?: (active: boolean) => void;
 }
 
 const VISIBLE_SLOTS = 4;
@@ -29,7 +28,6 @@ const PANEL_TITLE = {
 export default function ProductThinkingListOverlay({
   articles,
   lang,
-  onActiveChange,
 }: ProductThinkingListOverlayProps) {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -42,11 +40,6 @@ export default function ProductThinkingListOverlay({
   const active = articles[selectedIndex];
 
   const close = useCallback(() => navigate("/"), [navigate]);
-
-  useEffect(() => {
-    onActiveChange?.(true);
-    return () => onActiveChange?.(false);
-  }, [onActiveChange]);
 
   useEffect(() => {
     setSelectedIndex((idx) => Math.min(idx, Math.max(0, total - 1)));
@@ -141,19 +134,19 @@ export default function ProductThinkingListOverlay({
           className="product-list-shell relative z-10 pointer-events-auto select-none"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="product-list-panel">
-            <div className="product-list-header">
-              <button
-                type="button"
-                onClick={close}
-                className="product-list-close"
-                aria-label={lang === "en" ? "Close" : "关闭"}
-              >
-                <X size={16} strokeWidth={1.75} />
-              </button>
-              <h2 className="product-list-heading">{PANEL_TITLE[lang]}</h2>
-            </div>
+          <div className="product-list-float-header">
+            <button
+              type="button"
+              onClick={close}
+              className="product-list-close"
+              aria-label={lang === "en" ? "Close" : "关闭"}
+            >
+              <X size={15} strokeWidth={1.75} />
+            </button>
+            <h2 className="product-list-heading">{PANEL_TITLE[lang]}</h2>
+          </div>
 
+          <div className="product-list-panel">
             <div className="product-list-body">
               <div ref={listRef} className="product-list-viewport" onWheel={onWheel}>
                 <ul className="product-list-stack">

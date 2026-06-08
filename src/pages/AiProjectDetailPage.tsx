@@ -2,12 +2,7 @@ import { Navigate, useParams } from "react-router-dom";
 import AiProjectDetailView from "../components/AiProjectDetailView";
 import { getProjectById } from "../data/aiProjects";
 
-export default function AiProjectDetailPage({
-  lang,
-}: {
-  lang: "zh" | "zt" | "en";
-  setLang: (l: "zh" | "zt" | "en") => void;
-}) {
+export default function AiProjectDetailPage({ lang }: { lang: "zh" | "zt" | "en" }) {
   const { projectId } = useParams<{ projectId: string }>();
 
   if (!projectId || !getProjectById(projectId)) {

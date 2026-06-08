@@ -15,9 +15,22 @@ export default function HomePageContent({
   const t = useMemo(() => TRANSLATIONS[lang] || TRANSLATIONS.zh, [lang]);
   const [aboutChatOpen, setAboutChatOpen] = useState(false);
 
+  const openAboutChat = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    setAboutChatOpen(true);
+  };
+
   return (
     <main className="min-h-screen flex flex-col p-8 md:p-12 font-sans relative overflow-x-hidden bg-[#FAFAFA]">
       {aboutChatOpen && <AboutMeChatOverlay lang={lang} onClose={() => setAboutChatOpen(false)} />}
+      <div
+        className={`flex flex-col flex-grow w-full ${
+          aboutChatOpen ? "pointer-events-none select-none" : ""
+        }`}
+        aria-hidden={aboutChatOpen}
+      >
       <header className="flex justify-between items-center mb-0 px-4 w-full max-w-7xl mx-auto">
         <div className="flex flex-col">
           <h1 className="text-[24px] font-bold text-[#1A1A1A] tracking-tight font-mono">{t.name}</h1>
@@ -70,7 +83,7 @@ export default function HomePageContent({
                 color={project.color}
                 label={t[project.labelKey as keyof typeof t]}
                 to={project.path}
-                onOpen={project.id === "about" ? () => setAboutChatOpen(true) : undefined}
+                onOpen={project.id === "about" ? openAboutChat : undefined}
               />
             </motion.div>
           ))}
@@ -104,6 +117,7 @@ export default function HomePageContent({
           <Mail className="w-6 h-6" />
         </motion.a>
       </footer>
+      </div>
     </main>
   );
 }
