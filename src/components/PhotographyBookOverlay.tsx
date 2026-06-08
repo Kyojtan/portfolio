@@ -902,28 +902,26 @@ export default function PhotographyBookOverlay({
     return () => window.removeEventListener("wheel", onDocWheel);
   }, [zoomSrc]);
 
-  const handleOverlayClick = useCallback(
-    (e: React.MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest(".muji-album-interactive, .photo-book-close")) {
-        return;
-      }
-      if (zoomSrc) {
-        setZoomSrc(null);
-        return;
-      }
-      close();
-    },
-    [close, zoomSrc]
-  );
+  const handleBackdropClick = useCallback(() => {
+    if (zoomSrc) {
+      setZoomSrc(null);
+      return;
+    }
+    close();
+  }, [close, zoomSrc]);
 
   return (
     <AnimatePresence>
       <div
-        className="muji-album-overlay fixed inset-0 z-[100] flex items-center justify-center cursor-none"
-        onClick={handleOverlayClick}
+        className="muji-album-overlay fixed inset-0 z-[100] flex items-center justify-center cursor-none pointer-events-none"
         role="presentation"
       >
+        <div
+          className="muji-album-backdrop absolute inset-0 pointer-events-auto cursor-none"
+          onClick={handleBackdropClick}
+          aria-hidden
+        />
+
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -931,7 +929,7 @@ export default function PhotographyBookOverlay({
           transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
           className="muji-album-shell relative z-10 select-none pointer-events-none"
         >
-          <div className="muji-album-book muji-album-interactive">
+          <div className="muji-album-book pointer-events-none">
             <button
               type="button"
               onClick={(e) => {
@@ -944,7 +942,7 @@ export default function PhotographyBookOverlay({
               <X size={15} strokeWidth={1.75} />
             </button>
 
-            <div className="muji-album-stage">
+            <div className="muji-album-stage muji-album-interactive">
               <div
                 className={`muji-album-viewport ${verticalLayout ? "touch-pan-x" : "touch-pan-y"}`}
                 {...albumSwipeHandlers}
