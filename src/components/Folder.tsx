@@ -20,7 +20,7 @@ function FolderVisual({ color, label }: { color: string; label: string }) {
           className="flex-1 rounded-xl rounded-tl-none relative overflow-hidden backdrop-blur-xl border border-white/40 shadow-xl"
           style={{ backgroundColor: `${color}66` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent pointer-events-none" />
+          <div className="home-folder__highlight absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent pointer-events-none" />
           <div className="mt-4 mx-3 h-0.5 bg-black/5 rounded-full" />
           <div className="mt-2 mx-3 h-0.5 w-1/2 bg-black/5 rounded-full" />
         </div>

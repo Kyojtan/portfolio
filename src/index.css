@@ -2082,3 +2082,11 @@
     max-width: calc(100vw - 1.5rem);
   }
 }
+
+/* Home folders — iOS Safari shows a gray band when transparent gradient stops
+   reveal the backdrop-filter layer; hide highlight on phone widths only. */
+@media (max-width: 767px) {
+  .home-folder__highlight {
+    display: none;
+  }
+}
