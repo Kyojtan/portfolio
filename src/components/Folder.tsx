@@ -11,13 +11,13 @@ interface FolderProps {
 function FolderVisual({ color, label }: { color: string; label: string }) {
   return (
     <>
-      <div className="relative w-24 h-20 md:w-32 md:h-28 flex flex-col pt-2">
+      <div className="relative isolate w-24 h-20 md:w-32 md:h-28 flex flex-col pt-2">
         <div
-          className="w-10 h-3 md:w-14 md:h-4 ml-2 rounded-t-lg bg-white/40 backdrop-blur-md shadow-sm border-t border-x border-white/30"
+          className="relative z-0 w-10 h-3 md:w-14 md:h-4 ml-2 rounded-t-lg bg-white/40 backdrop-blur-md shadow-sm border-t border-x border-white/30"
           style={{ backgroundColor: `${color}44` }}
         />
         <div
-          className="flex-1 rounded-xl rounded-tl-none relative overflow-hidden backdrop-blur-xl border border-white/40 shadow-xl"
+          className="relative z-[1] -mt-px flex-1 rounded-xl rounded-tl-none overflow-hidden backdrop-blur-xl border border-white/40 shadow-xl"
           style={{ backgroundColor: `${color}66` }}
         >
           <div className="home-folder__highlight absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent pointer-events-none" />
