@@ -420,6 +420,10 @@
   image-rendering: auto;
 }
 
+.cover-art-3d__img--placeholder {
+  pointer-events: none;
+}
+
 .cover-art-3d--center .cover-art-3d__img {
   transform: translate3d(0, 0, 1px) scale(1.5);
 }

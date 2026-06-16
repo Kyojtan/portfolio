@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
-import ProjectCoverIcon from "./ProjectCoverIcon";
+import ProjectCoverIcon, { coverFileStem } from "./ProjectCoverIcon";
+import { preloadCover } from "../utils/optimizedImages";
 import { playUiSwitchSound, UI_SWITCH_SOUND_NAV_ID } from "../utils/uiSwitchSound";
 import { useHorizontalSwipe } from "../utils/useHorizontalSwipe";
 
@@ -19,11 +20,16 @@ interface AiProjectCoverFlowProps {
 }
 
 
-function getCardStyle(index: number, logicalIndex: number, total: number, compact = false) {
+function getCardOffset(index: number, logicalIndex: number, total: number) {
   const realIndex = ((logicalIndex % total) + total) % total;
   let offset = index - realIndex;
   if (offset > total / 2) offset -= total;
   if (offset < -total / 2) offset += total;
+  return offset;
+}
+
+function getCardStyle(index: number, logicalIndex: number, total: number, compact = false) {
+  const offset = getCardOffset(index, logicalIndex, total);
 
   if (offset === 0) {
     return {
@@ -53,13 +59,7 @@ export default function AiProjectCoverFlow({ projects, lang, onSelect }: AiProje
   const [compactLayout, setCompactLayout] = useState(
     () => typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches
   );
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const update = () => setCompactLayout(mq.matches);
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
+  const [loadFarCovers, setLoadFarCovers] = useState(false);
 
   const total = projects.length;
   const realIndex = total ? ((logicalIndex % total) + total) % total : 0;
@@ -80,6 +80,31 @@ export default function AiProjectCoverFlow({ projects, lang, onSelect }: AiProje
   const enterActive = useCallback(() => {
     if (active) onSelect(active.id);
   }, [active, onSelect]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setCompactLayout(mq.matches);
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(() => setLoadFarCovers(true), { timeout: 1200 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const id = window.setTimeout(() => setLoadFarCovers(true), 500);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    if (!total) return;
+    [-1, 0, 1].forEach((delta) => {
+      const index = ((realIndex + delta) % total + total) % total;
+      const stem = coverFileStem(projects[index]?.id ?? "");
+      if (stem) preloadCover(stem);
+    });
+  }, [realIndex, total, projects]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -185,8 +210,11 @@ export default function AiProjectCoverFlow({ projects, lang, onSelect }: AiProje
         >
           <div className="ai-coverflow-viewport">
             {projects.map((proj, i) => {
+              const offset = getCardOffset(i, logicalIndex, total);
               const style = getCardStyle(i, logicalIndex, total, compactLayout);
               const isCenter = i === realIndex;
+              const loadImage = Math.abs(offset) <= 1 || loadFarCovers;
+              const fetchPriority = isCenter ? "high" : Math.abs(offset) === 1 ? "low" : "auto";
 
               return (
                 <div
@@ -207,7 +235,12 @@ export default function AiProjectCoverFlow({ projects, lang, onSelect }: AiProje
                     }}
                     aria-label={proj.name[lang]}
                   >
-                    <ProjectCoverIcon projectId={proj.id} isCenter={isCenter} />
+                    <ProjectCoverIcon
+                      projectId={proj.id}
+                      isCenter={isCenter}
+                      loadImage={loadImage}
+                      fetchPriority={fetchPriority}
+                    />
                   </button>
                 </div>
               );

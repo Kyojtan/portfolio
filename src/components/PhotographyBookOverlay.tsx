@@ -12,6 +12,8 @@ import { playPageFlipSound } from "../utils/pageFlipSound";
 import { useHorizontalSwipe } from "../utils/useHorizontalSwipe";
 import { useVerticalSwipe } from "../utils/useVerticalSwipe";
 import { useAlbumVerticalLayout } from "../utils/useMediaQuery";
+import OptimizedPhotoImg, { zoomPhotoSrc } from "./OptimizedPhotoImg";
+import { preloadPhoto } from "../utils/optimizedImages";
 
 interface PhotographyBookOverlayProps {
   lang: "zh" | "zt" | "en";
@@ -92,6 +94,12 @@ function InvisibleFlipFace() {
   return <div className="muji-page muji-page--invisible" aria-hidden />;
 }
 
+function spreadImageSources(spread: PhotoSpread): string[] {
+  return [spread.leftImage, spread.rightImage].filter(
+    (src): src is string => !!src && src !== PHOTO_PLACEHOLDER_SRC
+  );
+}
+
 function BookPhotoLoaded({
   src,
   alt,
@@ -103,27 +111,7 @@ function BookPhotoLoaded({
   crop?: "center" | "top" | "bottom";
   onZoom?: (src: string) => void;
 }) {
-  const [currentSrc, setCurrentSrc] = useState(src);
-  const [stage, setStage] = useState(0);
   const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    setCurrentSrc(src);
-    setStage(0);
-    setHasError(false);
-  }, [src]);
-
-  const handleError = () => {
-    if (stage === 0) {
-      setStage(1);
-      setCurrentSrc(src.replace(/\.png$/i, ".jpg"));
-    } else if (stage === 1) {
-      setStage(2);
-      setCurrentSrc(src.replace(/\.png$/i, ".jpeg"));
-    } else {
-      setHasError(true);
-    }
-  };
 
   const objectPosition =
     crop === "top" ? "object-top" : crop === "bottom" ? "object-bottom" : "object-center";
@@ -142,17 +130,17 @@ function BookPhotoLoaded({
       className="muji-page-photo"
       onClick={(e) => {
         e.stopPropagation();
-        onZoom?.(currentSrc);
+        onZoom?.(zoomPhotoSrc(src));
       }}
       aria-label={alt}
     >
-      <img
-        src={currentSrc}
+      <OptimizedPhotoImg
+        src={src}
         alt={alt}
         className={`w-full h-full object-contain ${objectPosition}`}
         referrerPolicy="no-referrer"
-        onError={handleError}
         draggable={false}
+        onError={() => setHasError(true)}
       />
     </button>
   );
@@ -192,7 +180,13 @@ function MujiFrostedCover({
       <div className="muji-cover-inner">
         {previewSrc && !PHOTO_PLACEHOLDER_MODE && (
           <div className="muji-cover-preview" aria-hidden>
-            <img src={previewSrc} alt="" className="muji-cover-preview__img" />
+            <OptimizedPhotoImg
+              src={previewSrc}
+              alt=""
+              className="muji-cover-preview__img"
+              loading="eager"
+              fetchPriority="high"
+            />
           </div>
         )}
         <div className="muji-cover-frost" aria-hidden />
@@ -484,15 +478,24 @@ export default function PhotographyBookOverlay({ lang }: PhotographyBookOverlayP
     lang === "en" ? "The flavor of life" : lang === "zt" ? "世界愛" : "世界爱";
 
   useEffect(() => {
-    spreads.forEach((spread) => {
-      [spread.leftImage, spread.rightImage].forEach((src) => {
-        if (src && src !== PHOTO_PLACEHOLDER_SRC) {
-          const img = new Image();
-          img.src = src;
-        }
-      });
-    });
+    const coverSrc = spreads[0]?.leftImage;
+    if (coverSrc) preloadPhoto(coverSrc);
+
+    const firstSpread = spreads[0];
+    if (firstSpread) {
+      spreadImageSources(firstSpread).forEach(preloadPhoto);
+    }
   }, [spreads]);
+
+  useEffect(() => {
+    if (viewIndex < 0) return;
+
+    const toPreload = [viewIndex, viewIndex + 1];
+    toPreload.forEach((index) => {
+      const spread = spreads[index];
+      if (spread) spreadImageSources(spread).forEach(preloadPhoto);
+    });
+  }, [viewIndex, spreads]);
 
   const finishFlip = useCallback((target: ViewIndex) => {
     if (pendingFlipTarget.current !== target || flipFinishedRef.current) return;
